@@ -1,0 +1,1628 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "asaworkspacelab7"
+		},
+		"asacosmosdb01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'asacosmosdb01'"
+		},
+		"asadatalakelab7_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'asadatalakelab7'"
+		},
+		"asastorelab7_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'asastorelab7'"
+		},
+		"asaworkspacelab7-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'asaworkspacelab7-WorkspaceDefaultSqlServer'"
+		},
+		"sqlpool01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01'"
+		},
+		"sqlpool01_highperf_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01_highperf'"
+		},
+		"sqlpool01_import01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01_import01'"
+		},
+		"sqlpool01_workload01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01_workload01'"
+		},
+		"sqlpool01_workload02_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01_workload02'"
+		},
+		"asadatalakelab7_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://asadatalakelab7.dfs.core.windows.net"
+		},
+		"asakeyvaultlab7_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://asakeyvaultlab7.vault.azure.net/"
+		},
+		"asaworkspacelab7-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://asadatalakelab7.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/Copy December Sales')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Sales",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"preCopyScript": "TRUNCATE TABLE wwi_perf.Sale_Heap",
+								"allowPolyBase": true,
+								"polyBaseSettings": {
+									"rejectValue": 0,
+									"rejectType": "value",
+									"useTypeDefault": true
+								},
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 8,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "TransactionId",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TransactionId",
+											"type": "Guid"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerId",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "CustomerId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductId",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "ProductId",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Quantity",
+											"type": "SByte"
+										},
+										"sink": {
+											"name": "Quantity",
+											"type": "Byte"
+										}
+									},
+									{
+										"source": {
+											"name": "Price",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Price",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "TotalAmount",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "TotalAmount",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "TransactionDate",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "TransactionDateId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProfitAmount",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "ProfitAmount",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "Hour",
+											"type": "SByte"
+										},
+										"sink": {
+											"name": "Hour",
+											"type": "Byte"
+										}
+									},
+									{
+										"source": {
+											"name": "Minute",
+											"type": "SByte"
+										},
+										"sink": {
+											"name": "Minute",
+											"type": "Byte"
+										}
+									},
+									{
+										"source": {
+											"name": "StoreId",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "StoreId",
+											"type": "Int16"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "asal400_december_sales",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "asal400_saleheap_asa",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-05-21T10:05:18Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/asal400_december_sales')]",
+				"[concat(variables('workspaceId'), '/datasets/asal400_saleheap_asa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 08 - Execute Business Analyst Queries')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Analyst",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@range(1,5)",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Workload 2 for Data Analyst",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:02:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlDWSource",
+											"sqlReaderQuery": "select count(X.A) from (\nselect CAST(CustomerId as nvarchar(20)) as A from wwi.SaleSmall) X where A like '%3%'",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "wwi02_sale_small_workload_02_asa",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-05-20T18:08:37Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/wwi02_sale_small_workload_02_asa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 08 - Execute Data Analyst and CEO Queries')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "CEO",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@range(1,6)",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Workload 1 for CEO",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:02:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlDWSource",
+											"sqlReaderQuery": "select count(X.A) from (\nselect CAST(CustomerId as nvarchar(20)) as A from wwi.SaleSmall) X where A like '%3%'",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "wwi02_sale_small_workload_01_asa",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Analyst",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@range(1,6)",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Workload 2 for Data Analyst",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.00:02:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlDWSource",
+											"sqlReaderQuery": "select count(X.A) from (\nselect CAST(CustomerId as nvarchar(20)) as A from wwi.SaleSmall) X where A like '%3%'",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "wwi02_sale_small_workload_02_asa",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-05-20T18:08:50Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/wwi02_sale_small_workload_01_asa')]",
+				"[concat(variables('workspaceId'), '/datasets/wwi02_sale_small_workload_02_asa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Write Campaign Analytics to ASA')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "asal400_lab2_writecampaignanalyticstoasa",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "asal400_lab2_writecampaignanalyticstoasa",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"CampaignAnalytics": {},
+									"CampaignAnalyticsASA": {}
+								}
+							},
+							"staging": {
+								"linkedService": {
+									"referenceName": "asadatalakelab7",
+									"type": "LinkedServiceReference"
+								},
+								"folderPath": "staging"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/asal400_lab2_writecampaignanalyticstoasa')]",
+				"[concat(variables('workspaceId'), '/linkedServices/asadatalakelab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_campaign_analytics_source')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "asadatalakelab7",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "campaignanalytics.csv",
+						"folderPath": "campaign-analytics",
+						"fileSystem": "wwi-02"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asadatalakelab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_customerprofile_cosmosdb')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "asacosmosdb01",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbSqlApiCollection",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"userId": {
+							"type": "integer"
+						},
+						"cartId": {
+							"type": "string"
+						},
+						"preferredProducts": {
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
+						},
+						"productReviews": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"productId": {
+										"type": "integer"
+									},
+									"reviewText": {
+										"type": "string"
+									},
+									"reviewDate": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"typeProperties": {
+					"collectionName": "OnlineUserProfile01"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asacosmosdb01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_december_sales')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "asadatalakelab7",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "sale-20161230-snappy.parquet",
+						"folderPath": "campaign-analytics",
+						"fileSystem": "wwi-02"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "UTF8"
+					},
+					{
+						"name": "CustomerId",
+						"type": "INT32"
+					},
+					{
+						"name": "ProductId",
+						"type": "INT_16"
+					},
+					{
+						"name": "Quantity",
+						"type": "INT_8"
+					},
+					{
+						"name": "Price",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "TotalAmount",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "TransactionDate",
+						"type": "INT32"
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "Hour",
+						"type": "INT_8"
+					},
+					{
+						"name": "Minute",
+						"type": "INT_8"
+					},
+					{
+						"name": "StoreId",
+						"type": "INT_16"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asadatalakelab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_ecommerce_userprofiles_source')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "asadatalakelab7",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "online-user-profiles-02",
+						"fileSystem": "wwi-02"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"visitorId": {
+							"type": "integer"
+						},
+						"topProductPurchases": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"productId": {
+										"type": "integer"
+									},
+									"itemsPurchasedLast12Months": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asadatalakelab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_saleheap_asa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqlpool01_import01",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "CustomerId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductId",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Quantity",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Price",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TotalAmount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TransactionDateId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "Hour",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Minute",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "StoreId",
+						"type": "smallint",
+						"precision": 5
+					}
+				],
+				"typeProperties": {
+					"schema": "wwi_perf",
+					"table": "Sale_Heap"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/sqlpool01_import01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_wwi_campaign_analytics_asa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqlpool01",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "Region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Country",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductCategory",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CampaignName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Revenue",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "RevenueTarget",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "State",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "wwi",
+					"table": "CampaignAnalytics"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/sqlpool01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_wwi_usertopproductpurchases_asa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqlpool01",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "UserId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ItemsPurchasedLast12Months",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsTopProduct",
+						"type": "bit"
+					},
+					{
+						"name": "IsPreferredProduct",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "wwi",
+					"table": "UserTopProductPurchases"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/sqlpool01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/wwi02_sale_small_workload_01_asa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqlpool01_workload01",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "CustomerId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductId",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Quantity",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Price",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TotalAmount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TransactionDateId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "Hour",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Minute",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "StoreId",
+						"type": "smallint",
+						"precision": 5
+					}
+				],
+				"typeProperties": {
+					"schema": "wwi",
+					"table": "SaleSmall"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/sqlpool01_workload01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/wwi02_sale_small_workload_02_asa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqlpool01_workload02",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "CustomerId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductId",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Quantity",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Price",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TotalAmount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TransactionDateId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "Hour",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Minute",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "StoreId",
+						"type": "smallint",
+						"precision": 5
+					}
+				],
+				"typeProperties": {
+					"schema": "wwi",
+					"table": "SaleSmall"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/sqlpool01_workload02')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asacosmosdb01')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('asacosmosdb01_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asadatalakelab7')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('asadatalakelab7_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('asadatalakelab7_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asakeyvaultlab7')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('asakeyvaultlab7_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asastorelab7')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('asastorelab7_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asaworkspacelab7-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('asaworkspacelab7-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asaworkspacelab7-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('asaworkspacelab7-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultlab7",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultlab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01_highperf')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_highperf_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultlab7",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultlab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01_import01')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_import01_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultlab7",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultlab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01_workload01')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_workload01_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultlab7",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultlab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01_workload02')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_workload02_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultlab7",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultlab7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureIntegrationRuntime01')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "MemoryOptimized",
+							"coreCount": 16,
+							"timeToLive": 60
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_lab2_writecampaignanalyticstoasa')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "asal400_campaign_analytics_source",
+								"type": "DatasetReference"
+							},
+							"name": "CampaignAnalytics"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "asal400_wwi_campaign_analytics_asa",
+								"type": "DatasetReference"
+							},
+							"name": "CampaignAnalyticsASA"
+						}
+					],
+					"transformations": [
+						{
+							"name": "MapCampaignAnalytics"
+						},
+						{
+							"name": "ConvertColumnTypesAndValues"
+						},
+						{
+							"name": "SelectCampaignAnalyticsColumns"
+						}
+					],
+					"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as string,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as string,\n\t\t{_col5_} as double,\n\t\t{_col6_} as string,\n\t\t{_col7_} as double,\n\t\t{_col8_} as string,\n\t\t{_col9_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: 1) ~> CampaignAnalytics\nCampaignAnalytics select(mapColumn(\n\t\tRegion = {_col0_},\n\t\tCountry = {_col1_},\n\t\tProductCategory = {_col2_},\n\t\tCampaignName = {_col3_},\n\t\tRevenuePart1 = {_col4_},\n\t\tRevenue = {_col5_},\n\t\tRevenueTargetPart1 = {_col6_},\n\t\tRevenueTarget = {_col7_},\n\t\tCity = {_col8_},\n\t\tState = {_col9_}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> MapCampaignAnalytics\nMapCampaignAnalytics derive(Revenue = toDecimal(replace(concat(toString(RevenuePart1), toString(Revenue)), '\\\\', ''), 10, 2, '$###,###.##'),\n\t\tRevenueTarget = toDecimal(replace(concat(toString(RevenueTargetPart1), toString(RevenueTarget)), '\\\\', ''), 10, 2, '$###,###.##')) ~> ConvertColumnTypesAndValues\nConvertColumnTypesAndValues select(mapColumn(\n\t\tRegion,\n\t\tCountry,\n\t\tProductCategory,\n\t\tCampaignName,\n\t\tRevenue,\n\t\tRevenueTarget,\n\t\tCity,\n\t\tState\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectCampaignAnalyticsColumns\nSelectCampaignAnalyticsColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\tProductCategory as string,\n\t\tCampaignName as string,\n\t\tRevenue as decimal(10,2),\n\t\tRevenueTarget as decimal(10,2),\n\t\tCity as string,\n\t\tState as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> CampaignAnalyticsASA"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/asal400_campaign_analytics_source')]",
+				"[concat(variables('workspaceId'), '/datasets/asal400_wwi_campaign_analytics_asa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Activity 03 - Data Warehouse Optimization')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT\n    FS.CustomerID\n    ,MIN(FS.Quantity) as MinQuantity\n    ,MAX(FS.Quantity) as MaxQuantity\n    ,AVG(FS.Price) as AvgPrice\n    ,AVG(FS.TotalAmount) as AvgTotalAmount\n    ,AVG(FS.ProfitAmount) as AvgProfitAmount\n    ,COUNT(DISTINCT FS.StoreId) as DistinctStores\nFROM\n    wwi_perf.Sale_Heap FS\nGROUP BY\n    FS.CustomerId",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"name": "SQLPool01",
+						"type": "SqlPool"
+					}
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 05 - Exercise 3 - Column Level Security')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "    /*  Column-level security feature in Azure Synapse simplifies the design and coding of security in application.\n        It ensures column level security by restricting column access to protect sensitive data. */\n\n    /* Scenario: In this scenario we will be working with two users. The first one is the CEO, he has access to all\n        data. The second one is DataAnalystMiami, this user doesn't have access to the confidential Revenue column\n        in the Sales table. Follow this lab, one step at a time to see how Column-level security removes access to the\n        Revenue column to DataAnalystMiami */\n\n    --Step 1: Let us see how this feature in Azure Synapse works. Before that let us have a look at the Campaign table.\n    select  Top 100 * from wwi_Security.Sale\n    where City is not null and state is not null\n\n    /*  Consider a scenario where there are two users.\n        A CEO, who is an authorized  personnel with access to all the information in the database\n        and a Data Analyst, to whom only required information should be presented.*/\n\n    -- Step:2 Verify the existence of the 'CEO' and 'DataAnalystMiami' users in the Datawarehouse.\n    SELECT Name as [User1] FROM sys.sysusers WHERE name = N'CEO';\n    SELECT Name as [User2] FROM sys.sysusers WHERE name = N'DataAnalystMiami';\n\n\n    -- Step:3 Now let us enforce column level security for the DataAnalystMiami.\n    /*  The Sales table in the warehouse has information like ProductID, Analyst, Product, CampaignName, Quantity, Region, State, City, RevenueTarget and Revenue.\n        The Revenue generated from every campaign is classified and should be hidden from DataAnalystMiami.\n    */\n\n    REVOKE SELECT ON wwi_security.Sale FROM DataAnalystMiami;\n    GRANT SELECT ON wwi_security.Sale([ProductID], [Analyst], [Product], [CampaignName],[Quantity], [Region], [State], [City], [RevenueTarget]) TO DataAnalystMiami;\n    -- This provides DataAnalystMiami access to all the columns of the Sale table but Revenue.\n\n    -- Step:4 Then, to check if the security has been enforced, we execute the following query with current User As 'DataAnalystMiami', this will result in an error\n    --  since DataAnalystMiami doesn't have select access to the Revenue column\n    EXECUTE AS USER ='DataAnalystMiami';\n    select TOP 100 * from wwi_security.Sale;\n    ---\n    -- The following query will succeed since we are not including the Revenue column in the query.\n    EXECUTE AS USER ='DataAnalystMiami';\n    select [ProductID], [Analyst], [Product], [CampaignName],[Quantity], [Region], [State], [City], [RevenueTarget] from wwi_security.Sale;\n    \n    -- Step:5 Whereas, the CEO of the company should be authorized with all the information present in the warehouse.To do so, we execute the following query.\n    Revert;\n    GRANT SELECT ON wwi_security.Sale TO CEO;  --Full access to all columns.\n\n    -- Step:6 Let us check if our CEO user can see all the information that is present. Assign Current User As 'CEO' and the execute the query\n    EXECUTE AS USER ='CEO'\n    select * from wwi_security.Sale\n    Revert;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"name": "SQLPool01",
+						"type": "SqlPool"
+					}
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 05 - Exercise 3 - Dynamic Data Masking')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "    -------------------------------------------------------------------------Dynamic Data Masking (DDM)----------------------------------------------------------------------------------------------------------\n    /*  Dynamic data masking helps prevent unauthorized access to sensitive data by enabling customers\n        to designate how much of the sensitive data to reveal with minimal impact on the application layer.\n        Let see how */\n\n    /* Scenario: WWI has identified sensitive information in the CustomerInfo table. They would like us to \n        obfuscate the CreditCard and Email columns of the CustomerInfo table to DataAnalysts */\n\n    -- Step:1 Let us first get a view of CustomerInfo table.\n    SELECT TOP (100) * FROM wwi_security.CustomerInfo;\n\n    -- Step:2 Let's confirm that there are no Dynamic Data Masking (DDM) applied on columns.\n    SELECT c.name, tbl.name as table_name, c.is_masked, c.masking_function  \n    FROM sys.masked_columns AS c  \n    JOIN sys.tables AS tbl\n        ON c.[object_id] = tbl.[object_id]  \n    WHERE is_masked = 1\n        AND tbl.name = 'CustomerInfo';\n    -- No results returned verify that no data masking has been done yet.\n\n    -- Step:3 Now lets mask 'CreditCard' and 'Email' Column of 'CustomerInfo' table.\n    ALTER TABLE wwi_security.CustomerInfo  \n    ALTER COLUMN [CreditCard] ADD MASKED WITH (FUNCTION = 'partial(0,\"XXXX-XXXX-XXXX-\",4)');\n    GO\n    ALTER TABLE wwi_security.CustomerInfo\n    ALTER COLUMN Email ADD MASKED WITH (FUNCTION = 'email()');\n    GO\n    -- The columns are sucessfully masked.\n\n    -- Step:4 Let's see Dynamic Data Masking (DDM) applied on the two columns.\n    SELECT c.name, tbl.name as table_name, c.is_masked, c.masking_function  \n    FROM sys.masked_columns AS c  \n    JOIN sys.tables AS tbl\n        ON c.[object_id] = tbl.[object_id]  \n    WHERE is_masked = 1\n        AND tbl.name ='CustomerInfo';\n\n    -- Step:5 Now, let us grant SELECT permission to 'DataAnalystMiami' on the 'CustomerInfo' table.\n   GRANT SELECT ON wwi_security.CustomerInfo TO DataAnalystMiami;  \n\n    -- Step:6 Logged in as  'DataAnalystMiami' let us execute the select query and view the result.\n    EXECUTE AS USER = 'DataAnalystMiami';  \n    SELECT * FROM wwi_security.CustomerInfo;\n\n    -- Step:7 Let us remove the data masking using UNMASK permission\n    GRANT UNMASK TO DataAnalystMiami;\n    EXECUTE AS USER = 'DataAnalystMiami';  \n    SELECT *\n    FROM wwi_security.CustomerInfo;\n    revert;\n    REVOKE UNMASK TO DataAnalystMiami;  \n\n    ----step:8 Reverting all the changes back to as it was.\n    ALTER TABLE wwi_security.CustomerInfo\n    ALTER COLUMN CreditCard DROP MASKED;\n    GO\n    ALTER TABLE wwi_security.CustomerInfo\n    ALTER COLUMN Email DROP MASKED;\n    GO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"name": "SQLPool01",
+						"type": "SqlPool"
+					}
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 05 - Exercise 3 - Row Level Security')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "/*\tRow level Security (RLS) in Azure Synapse enables us to use group membership to control access to rows in a table.\n\tAzure Synapse applies the access restriction every time the data access is attempted from any user. \n\tLet see how we can implement row level security in Azure Synapse.*/\n\n----------------------------------Row-Level Security (RLS), 1: Filter predicates------------------------------------------------------------------\n-- Step:1 The Sale table has two Analyst values: DataAnalystMiami and DataAnalystSanDiego. \n--     Each analyst has jurisdiction across a specific Region. DataAnalystMiami on the South East Region\n--      and DataAnalystSanDiego on the Far West region.\nSELECT DISTINCT Analyst, Region FROM wwi_security.Sale order by Analyst ;\n\n/* Scenario: WWI requires that an Analyst only see the data for their own data from their own region. The CEO should see ALL data.\n    In the Sale table, there is an Analyst column that we can use to filter data to a specific Analyst value. */\n\n/* We will define this filter using what is called a Security Predicate. This is an inline table-valued function that allows\n    us to evaluate additional logic, in this case determining if the Analyst executing the query is the same as the Analyst\n    specified in the Analyst column in the row. The function returns 1 (will return the row) when a row in the Analyst column is the same as the \n    user executing the query (@Analyst = USER_NAME()) or if the user executing the query is the CEO user (USER_NAME() = 'CEO')\n    whom has access to all data.\n*/\n\n-- Review any existing security predicates in the database\nSELECT * FROM sys.security_predicates\n\n--Step:2 Create a new Schema to hold the security predicate, then define the predicate function. It returns 1 (or True) when\n--  a row should be returned in the parent query.\nGO\n\nCREATE FUNCTION wwi_security.fn_securitypredicate(@Analyst AS sysname)  \n    RETURNS TABLE  \nWITH SCHEMABINDING  \nAS  \n    RETURN SELECT 1 AS fn_securitypredicate_result\n    WHERE @Analyst = USER_NAME() OR USER_NAME() = 'CEO'\nGO\n-- Now we define security policy that adds the filter predicate to the Sale table. This will filter rows based on their login name.\nCREATE SECURITY POLICY SalesFilter  \nADD FILTER PREDICATE wwi_security.fn_securitypredicate(Analyst)\nON wwi_security.Sale\nWITH (STATE = ON);\n\n------ Allow SELECT permissions to the Sale Table.------\nGRANT SELECT ON wwi_security.Sale TO CEO, DataAnalystMiami, DataAnalystSanDiego;\n\n-- Step:3 Let us now test the filtering predicate, by selecting data from the Sale table as 'DataAnalystMiami' user.\nEXECUTE AS USER = 'DataAnalystMiami' \nSELECT * FROM wwi_security.Sale;\nrevert;\n-- As we can see, the query has returned rows here Login name is DataAnalystMiami\n\n-- Step:4 Let us test the same for  'DataAnalystSanDiego' user.\nEXECUTE AS USER = 'DataAnalystSanDiego';\nSELECT * FROM wwi_security.Sale;\nrevert;\n-- RLS is working indeed.\n\n-- Step:5 The CEO should be able to see all rows in the table.\nEXECUTE AS USER = 'CEO';  \nSELECT * FROM wwi_security.Sale;\nrevert;\n-- And he can.\n\n--Step:6 To disable the security policy we just created above, we execute the following.\nALTER SECURITY POLICY SalesFilter  \nWITH (STATE = OFF);\n\nDROP SECURITY POLICY SalesFilter;\nDROP FUNCTION wwi_security.fn_securitypredicate;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"name": "SQLPool01",
+						"type": "SqlPool"
+					}
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 1 - Task 1 - Staging Sale Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE [wwi_staging].[Sale]\n(\n    [TransactionId] [uniqueidentifier]  NOT NULL,\n    [CustomerId] [int]  NOT NULL,\n    [ProductId] [smallint]  NOT NULL,\n    [Quantity] [smallint]  NOT NULL,\n    [Price] [decimal](9,2)  NOT NULL,\n    [TotalAmount] [decimal](9,2)  NOT NULL,\n    [TransactionDate] [int]  NOT NULL,\n    [ProfitAmount] [decimal](9,2)  NOT NULL,\n    [Hour] [tinyint]  NOT NULL,\n    [Minute] [tinyint]  NOT NULL,\n    [StoreId] [smallint]  NOT NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH ( [CustomerId] ),\n    CLUSTERED COLUMNSTORE INDEX,\n    PARTITION\n    (\n        [TransactionDate] RANGE RIGHT FOR VALUES (20100101, 20100201, 20100301, 20100401, 20100501, 20100601, 20100701, 20100801, 20100901, 20101001, 20101101, 20101201, 20110101, 20110201, 20110301, 20110401, 20110501, 20110601, 20110701, 20110801, 20110901, 20111001, 20111101, 20111201, 20120101, 20120201, 20120301, 20120401, 20120501, 20120601, 20120701, 20120801, 20120901, 20121001, 20121101, 20121201, 20130101, 20130201, 20130301, 20130401, 20130501, 20130601, 20130701, 20130801, 20130901, 20131001, 20131101, 20131201, 20140101, 20140201, 20140301, 20140401, 20140501, 20140601, 20140701, 20140801, 20140901, 20141001, 20141101, 20141201, 20150101, 20150201, 20150301, 20150401, 20150501, 20150601, 20150701, 20150801, 20150901, 20151001, 20151101, 20151201, 20160101, 20160201, 20160301, 20160401, 20160501, 20160601, 20160701, 20160801, 20160901, 20161001, 20161101, 20161201, 20170101, 20170201, 20170301, 20170401, 20170501, 20170601, 20170701, 20170801, 20170901, 20171001, 20171101, 20171201, 20180101, 20180201, 20180301, 20180401, 20180501, 20180601, 20180701, 20180801, 20180901, 20181001, 20181101, 20181201, 20190101, 20190201, 20190301, 20190401, 20190501, 20190601, 20190701, 20190801, 20190901, 20191001, 20191101, 20191201)\n    )\n)\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 1 - Task 2 - 001 External Data Source')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Replace SUFFIX with the lab workspace id.\nCREATE EXTERNAL DATA SOURCE ABSS\nWITH\n( TYPE = HADOOP,\n    LOCATION = 'abfss://wwi-02@asadatalakelab7.dfs.core.windows.net'\n);\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 1 - Task 2 - 002 External File Format and External Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE EXTERNAL FILE FORMAT [ParquetFormat]\nWITH (\n    FORMAT_TYPE = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n)\nGO\n\nCREATE SCHEMA [wwi_external];\nGO\n\nCREATE EXTERNAL TABLE [wwi_external].Sales\n    (\n        [TransactionId] [nvarchar](36)  NOT NULL,\n        [CustomerId] [int]  NOT NULL,\n        [ProductId] [smallint]  NOT NULL,\n        [Quantity] [smallint]  NOT NULL,\n        [Price] [decimal](9,2)  NOT NULL,\n        [TotalAmount] [decimal](9,2)  NOT NULL,\n        [TransactionDate] [int]  NOT NULL,\n        [ProfitAmount] [decimal](9,2)  NOT NULL,\n        [Hour] [tinyint]  NOT NULL,\n        [Minute] [tinyint]  NOT NULL,\n        [StoreId] [smallint]  NOT NULL\n    )\nWITH\n    (\n        LOCATION = '/sale-small%2FYear%3D2019',  \n        DATA_SOURCE = ABSS,\n        FILE_FORMAT = [ParquetFormat]  \n    )  \nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 1 - Task 3 - Configure and run COPY statement')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "TRUNCATE TABLE wwi_staging.SaleHeap; /*deallocate empty pages on a heap table during*/\nGO\n\n-- Replace <PrimaryStorage> with the workspace default storage account name.\nCOPY INTO wwi_staging.SaleHeap\nFROM 'https://asadatalakelab7.dfs.core.windows.net/wwi-02/sale-small%2FYear%3D2019'\nWITH (\n    FILE_TYPE = 'PARQUET',\n    COMPRESSION = 'SNAPPY'\n)\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 1 - Task 4 - Load data into CCI')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT COUNT(1) FROM wwi_staging.SaleHeap(nolock)\n\n-- Replace SUFFIX with the workspace default storage account name.\nCOPY INTO wwi_staging.Sale\nFROM 'https://asadatalakelab7.dfs.core.windows.net/wwi-02/sale-small%2FYear%3D2019'\nWITH (\n    FILE_TYPE = 'PARQUET',\n    COMPRESSION = 'SNAPPY'\n)\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 1 - Task 5 - Use COPY to load text file with nonstandard delimiters')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE [wwi_staging].DailySalesCounts\n    (\n        [Date] [int]  NOT NULL,\n        [NorthAmerica] [int]  NOT NULL,\n        [SouthAmerica] [int]  NOT NULL,\n        [Europe] [int]  NOT NULL,\n        [Africa] [int]  NOT NULL,\n        [Asia] [int]  NOT NULL\n    )\nGO\n\n\n-- Replace <PrimaryStorage> with the workspace default storage account name.\nCOPY INTO wwi_staging.DailySalesCounts\nFROM 'https://asadatalakelab7.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'\nWITH (\n    FILE_TYPE = 'CSV',\n    FIELDTERMINATOR='.',\n    ROWTERMINATOR=','\n)\nGO\n\nSELECT * FROM [wwi_staging].DailySalesCounts\nORDER BY [Date] DESC\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 1 - Task 6 - Use POLYBASE to load text file with nonstandard delimiters')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE EXTERNAL FILE FORMAT csv_dailysales\nWITH (\n    FORMAT_TYPE = DELIMITEDTEXT,\n    FORMAT_OPTIONS (\n        FIELD_TERMINATOR = '.',\n        DATE_FORMAT = '',\n        USE_TYPE_DEFAULT = False\n    )\n);\nGO\n\nCREATE EXTERNAL TABLE [wwi_external].DailySalesCounts\n    (\n        [Date] [int]  NOT NULL,\n        [NorthAmerica] [int]  NOT NULL,\n        [SouthAmerica] [int]  NOT NULL,\n        [Europe] [int]  NOT NULL,\n        [Africa] [int]  NOT NULL,\n        [Asia] [int]  NOT NULL\n    )\nWITH\n    (\n        LOCATION = '/campaign-analytics/dailycounts.txt',  \n        DATA_SOURCE = ABSS,\n        FILE_FORMAT = csv_dailysales\n    )  \nGO\nINSERT INTO [wwi_staging].[DailySalesCounts]\nSELECT *\nFROM [wwi_external].[DailySalesCounts]\n\n/*\nThe row delimiter in delimited-text files must be supported by Hadoop's LineRecordReader. That is, it must be either \\r, \\n, or \\r\\n. These delimiters are not user-configurable.\n*/",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 1 - Task1 - Staging Heap Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "/*CREATE SCHEMA [wwi_staging]*/\nCREATE TABLE [wwi_staging].[SaleHeap]\n( \n    [TransactionId] [uniqueidentifier]  NOT NULL,\n    [CustomerId] [int]  NOT NULL,\n    [ProductId] [smallint]  NOT NULL,\n    [Quantity] [smallint]  NOT NULL,\n    [Price] [decimal](9,2)  NOT NULL,\n    [TotalAmount] [decimal](9,2)  NOT NULL,\n    [TransactionDate] [int]  NOT NULL,\n    [ProfitAmount] [decimal](9,2)  NOT NULL,\n    [Hour] [tinyint]  NOT NULL,\n    [Minute] [tinyint]  NOT NULL,\n    [StoreId] [smallint]  NOT NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    HEAP\n)\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 07 - Exercise 2 - Task 1 - Configure workload management classification')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "IF NOT EXISTS (SELECT * FROM sys.workload_management_workload_classifiers WHERE group_name = 'BigDataLoad')\nBEGIN\n    CREATE WORKLOAD GROUP BigDataLoad WITH  \n    (\n        MIN_PERCENTAGE_RESOURCE = 50 -- integer value\n        ,REQUEST_MIN_RESOURCE_GRANT_PERCENT = 25 --  (guaranteed a minimum of 4 concurrency)\n        ,CAP_PERCENTAGE_RESOURCE = 100\n    );\nEND\nIF NOT EXISTS (SELECT * FROM sys.workload_management_workload_classifiers WHERE [name] = 'HeavyLoader')\nBEGIN\n    CREATE WORKLOAD Classifier HeavyLoader WITH\n    (\n        Workload_Group ='BigDataLoad',\n        MemberName='asa.sql.import01',\n        IMPORTANCE = HIGH\n    );\nEND\n\nSELECT * FROM sys.workload_management_workload_classifiers\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/New Edition - Lab 6 - Ex 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE [wwi].[UserTopProductPurchases]\n(\n    [UserId] [int]  NOT NULL,\n    [ProductId] [int]  NOT NULL,\n    [ItemsPurchasedLast12Months] [int]  NULL,\n    [IsTopProduct] [bit]  NOT NULL,\n    [IsPreferredProduct] [bit]  NOT NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH ( [UserId] ),\n    CLUSTERED COLUMNSTORE INDEX\n)\n\nCREATE TABLE [wwi].[CampaignAnalytics]\n(\n    [Region] [nvarchar](50)  NOT NULL,\n    [Country] [nvarchar](30)  NOT NULL,\n    [ProductCategory] [nvarchar](50)  NOT NULL,\n    [CampaignName] [nvarchar](500)  NOT NULL,\n    [Revenue] [decimal](10,2)  NULL,\n    [RevenueTarget] [decimal](10,2)  NULL,\n    [City] [nvarchar](50)  NULL,\n    [State] [nvarchar](25)  NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH ( [Region] ),\n    CLUSTERED COLUMNSTORE INDEX\n)\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPool01')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"restorePointInTime": "0001-01-01T00:00:00",
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "francecentral"
+		}
+	]
+}
