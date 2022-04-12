@@ -1,0 +1,20 @@
+{
+	"name": "04-create-stored-procedures",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "IF OBJECT_ID(N'[dbo].[Reset_ML_Environment]', N'P') IS NOT NULL   \nDROP PROCEDURE [dbo].[Reset_ML_Environment]\nGO\n\nCREATE PROC [dbo].[Reset_ML_Environment] AS\nBEGIN\n\ndelete from FinanceSales;\ndelete from Customer_SalesLatest;\n\nCOPY INTO FinanceSales\nFROM 'https://solliancepublicdata.blob.core.windows.net/cdp/csv/FinanceSales.csv'\nWITH (\n\tFILE_TYPE = 'CSV',\n\tFIRSTROW = 2 \n)\n\nCOPY INTO Customer_SalesLatest\nFROM 'https://solliancepublicdata.blob.core.windows.net/cdp/csv/Customer_SalesLatest.csv'\nWITH (\n\tFILE_TYPE = 'CSV',\n\tFIRSTROW = 2 \n)\n\nEND\nGO\n\nIF OBJECT_ID(N'[dbo].[Delete_SelfReferencing_Product_Recommendations]', N'P') IS NOT NULL   \nDROP PROCEDURE [dbo].[Delete_SelfReferencing_Product_Recommendations]\nGO\n\nCREATE PROC [dbo].[Delete_SelfReferencing_Product_Recommendations] AS\nBEGIN\nDelete from ProductRecommendations_Sparkv2 where ProductId = RecommendedProductId\nEND\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

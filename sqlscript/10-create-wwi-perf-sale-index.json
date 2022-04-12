@@ -1,0 +1,20 @@
+{
+	"name": "10-create-wwi-perf-sale-index",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "EXECUTE AS USER = 'asa.sql.highperf'\n\nIF OBJECT_ID(N'[wwi_perf].[Sale_Index]', N'U') IS NOT NULL   \nDROP TABLE [wwi_perf].[Sale_Index] \n\nCREATE TABLE [wwi_perf].[Sale_Index]\nWITH\n(\n\tDISTRIBUTION = HASH ( [CustomerId] ),\n\tCLUSTERED INDEX (CustomerId)\n)\nAS\nSELECT\n\t*\nFROM\t\n\t[wwi_perf].[Sale_Heap]\nOPTION  (LABEL  = 'CTAS : Sale_Index')\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

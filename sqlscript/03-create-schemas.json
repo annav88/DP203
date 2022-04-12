@@ -1,0 +1,20 @@
+{
+	"name": "03-create-schemas",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "create schema wwi\ngo\ncreate schema wwi_security\ngo\ncreate schema wwi_staging\ngo\ncreate schema wwi_perf\ngo\ncreate schema wwi_poc\ngo\ncreate schema wwi_ml\ngo",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

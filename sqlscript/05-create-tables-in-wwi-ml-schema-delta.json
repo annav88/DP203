@@ -1,0 +1,20 @@
+{
+	"name": "05-create-tables-in-wwi-ml-schema-delta",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "CREATE EXTERNAL TABLE [wwi_ml].[MLModelExt]\n(\n[Model] [varbinary](max) NULL\n)\nWITH\n(\nLOCATION='/ml/onnx-hex' ,\nDATA_SOURCE = ModelStorage ,\nFILE_FORMAT = csv ,\nREJECT_TYPE = VALUE ,\nREJECT_VALUE = 0\n)\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

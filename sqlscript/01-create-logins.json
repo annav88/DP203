@@ -1,0 +1,20 @@
+{
+	"name": "01-create-logins",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "create login [asa.sql.workload01] with password = '#PASSWORD#'\ncreate login [asa.sql.workload02] with password = '#PASSWORD#'\ncreate login [asa.sql.import01] with password = '#PASSWORD#'\ncreate login [asa.sql.import02] with password = '#PASSWORD#'\ncreate login [asa.sql.highperf] with password = '#PASSWORD#'",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

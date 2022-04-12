@@ -1,0 +1,20 @@
+{
+	"name": "16-create-poc-schema",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'wwi_poc')\nBEGIN\nEXEC('CREATE SCHEMA wwi_poc')\nEND\n\nIF OBJECT_ID(N'[wwi_poc].[Customer]', N'U') IS NOT NULL   \nDROP TABLE [wwi_poc].[Customer]  \n\nCREATE TABLE wwi_poc.Customer\n(\n    CustomerId INT NOT NULL\n    ,FirstName NVARCHAR(1000) NOT NULL\n    ,MiddleInitial NVARCHAR(10) NULL\n    ,LastName NVARCHAR(1000) NOT NULL\n    ,FullName NVARCHAR(2010) NOT NULL\n    ,Gender NVARCHAR(100) NULL\n    ,Age INT NULL\n    ,BirthDate DATE NULL\n    ,Address_PostalCode NVARCHAR(200) NULL\n    ,Address_Street NVARCHAR(2000) NULL\n    ,Address_City NVARCHAR(2000) NULL\n    ,Address_Country NVARCHAR(2000) NULL\n    ,Mobile NVARCHAR(500) NULL\n    ,Email NVARCHAR(500) NULL\n)\nWITH\n(\n\tDISTRIBUTION = ROUND_ROBIN,\n\tHEAP\n)\n\nIF OBJECT_ID(N'[wwi_poc].[Date]', N'U') IS NOT NULL   \nDROP TABLE [wwi_poc].[Date]  \n\nCREATE TABLE [wwi_poc].[Date]\nWITH\n(\n\tDISTRIBUTION = ROUND_ROBIN,\n\tHEAP\n)\nAS\nSELECT\n\t*\nFROM\t\n\t[wwi].[Date]\n\n\n\nIF OBJECT_ID(N'[wwi_poc].[Product]', N'U') IS NOT NULL   \nDROP TABLE [wwi_poc].[Product]  \n\nCREATE TABLE [wwi_poc].[Product]\nWITH\n(\n\tDISTRIBUTION = ROUND_ROBIN,\n\tHEAP\n)\nAS\nSELECT\n\t*\nFROM\t\n\t[wwi].[Product]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

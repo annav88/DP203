@@ -1,0 +1,20 @@
+{
+	"name": "07-create-wwi-perf-sale-heap",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "EXECUTE AS USER = 'asa.sql.highperf'\n\nIF OBJECT_ID(N'[wwi_perf].[Sale_Heap]', N'U') IS NOT NULL   \nDROP TABLE [wwi_perf].[Sale_Heap]  \n\n-- CREATE TABLE [wwi_perf].[Sale_Heap]\n-- WITH\n-- (\n-- \tDISTRIBUTION = ROUND_ROBIN,\n-- \tHEAP\n-- )\n-- AS\n-- SELECT\n-- \t*\n-- FROM\t\n-- \t[wwi].[SaleSmall]\n-- WHERE\n-- \tTransactionDateId >= 20190101\n-- OPTION  (LABEL  = 'CTAS : Sale_Heap')\n\nCREATE TABLE [wwi_perf].[Sale_Heap]\n( \n\t[TransactionId] [uniqueidentifier]  NOT NULL,\n\t[CustomerId] [int]  NOT NULL,\n\t[ProductId] [smallint]  NOT NULL,\n\t[Quantity] [tinyint]  NOT NULL,\n\t[Price] [decimal](9,2)  NOT NULL,\n\t[TotalAmount] [decimal](9,2)  NOT NULL,\n\t[TransactionDateId] [int]  NOT NULL,\n\t[ProfitAmount] [decimal](9,2)  NOT NULL,\n\t[Hour] [tinyint]  NOT NULL,\n\t[Minute] [tinyint]  NOT NULL,\n\t[StoreId] [smallint]  NOT NULL\n)\nWITH\n(\n\tDISTRIBUTION = ROUND_ROBIN,\n\tHEAP\n)",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

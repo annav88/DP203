@@ -1,0 +1,61 @@
+{
+	"name": "Dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "mydataset",
+						"type": "DatasetReference"
+					},
+					"name": "mySource1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "asal400_campaign_analytics_source",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          userId as integer,",
+				"          cartId as string,",
+				"          preferredProducts as integer[],",
+				"          productReviews as string[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> mySource1",
+				"mySource1 derive(userId = toInteger(userId)) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string,",
+				"          Column_7 as string,",
+				"          Column_8 as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

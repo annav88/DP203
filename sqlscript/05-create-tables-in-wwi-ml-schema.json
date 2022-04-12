@@ -1,0 +1,20 @@
+{
+	"name": "05-create-tables-in-wwi-ml-schema",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "CREATE MASTER KEY\nGO\n\nCREATE DATABASE SCOPED CREDENTIAL StorageCredential\nWITH\nIDENTITY = 'SHARED ACCESS SIGNATURE'\n, SECRET = '#DATA_LAKE_ACCOUNT_KEY#'\n;\n\n--DROP EXTERNAL DATA SOURCE ModelStorage\n-- Create an external data source with CREDENTIAL option.\nCREATE EXTERNAL DATA SOURCE ModelStorage\nWITH\n( LOCATION = 'wasbs://wwi-02@#DATA_LAKE_ACCOUNT_NAME#.blob.core.windows.net'\n, CREDENTIAL = StorageCredential\n, TYPE = HADOOP\n)\n;\nCREATE EXTERNAL FILE FORMAT csv\nWITH (\nFORMAT_TYPE = DELIMITEDTEXT,\nFORMAT_OPTIONS (\nFIELD_TERMINATOR = ',',\nSTRING_DELIMITER = '',\nDATE_FORMAT = '',\nUSE_TYPE_DEFAULT = False\n)\n);\n\n\nCREATE EXTERNAL TABLE [wwi_ml].[MLModelExt]\n(\n[Model] [varbinary](max) NULL\n)\nWITH\n(\nLOCATION='/ml/onnx-hex' ,\nDATA_SOURCE = ModelStorage ,\nFILE_FORMAT = csv ,\nREJECT_TYPE = VALUE ,\nREJECT_VALUE = 0\n)\nGO\n\nCREATE TABLE [wwi_ml].[MLModel]\n(\n\t[Id] [int] IDENTITY(1,1) NOT NULL,\n\t[Model] [varbinary](max) NULL,\n\t[Description] [varchar](200) NULL\n)\nWITH\n(\n\tDISTRIBUTION = REPLICATE,\n\tHEAP\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "06-create-tables-in-wwi-security-schema",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "\ncreate user [CEO] without login\ncreate user [DataAnalystMiami] without login\ncreate user [DataAnalystSanDiego] without login\n\nIF OBJECT_ID(N'[wwi_security].[CustomerInfo]', N'U') IS NOT NULL   \nDROP TABLE [wwi_security].[CustomerInfo]\n\nCREATE TABLE [wwi_security].[CustomerInfo]\n( \n\t[UserName] [nvarchar](100)  NULL,\n\t[Gender] [nvarchar](10)  NULL,\n\t[Phone] [nvarchar](50)  NULL,\n\t[Email] [nvarchar](150)  NULL,\n\t[CreditCard] [nvarchar](21)  NULL\n)\nWITH\n(\n\tDISTRIBUTION = REPLICATE,\n\tCLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nCOPY INTO [wwi_security].[CustomerInfo]\nFROM 'https://#DATA_LAKE_ACCOUNT_NAME#.dfs.core.windows.net/wwi-02/security/customerinfo.csv'\nWITH (\n\tCREDENTIAL = (IDENTITY = 'Storage Account Key', SECRET = '#DATA_LAKE_ACCOUNT_KEY#'),\n    FILE_TYPE = 'CSV',\n    FIRSTROW = 2,\n\tFIELDQUOTE='''',\n    ENCODING='UTF8'\n)\nGO\n\nIF OBJECT_ID(N'[wwi_security].[Sale]', N'U') IS NOT NULL  \nDROP TABLE [wwi_security].[Sale]\nGO\n\nCREATE TABLE [wwi_security].[Sale]\n( \n\t[ProductId] [int]  NOT NULL,\n\t[Analyst] [nvarchar](100)  NOT NULL,\n\t[Product] [nvarchar](200)  NOT NULL,\n\t[CampaignName] [nvarchar](200)  NOT NULL,\n\t[Quantity] [int]  NOT NULL,\n\t[Region] [nvarchar](50)  NOT NULL,\n\t[State] [nvarchar](50)  NOT NULL,\n\t[City] [nvarchar](50)  NOT NULL,\n\t[Revenue] [nvarchar](50)  NULL,\n\t[RevenueTarget] [nvarchar](50)  NULL\n)\nWITH\n(\n\tDISTRIBUTION = ROUND_ROBIN,\n\tCLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nCOPY INTO [wwi_security].[Sale]\nFROM 'https://#DATA_LAKE_ACCOUNT_NAME#.dfs.core.windows.net/wwi-02/security/factsale.csv'\nWITH (\n\tCREDENTIAL = (IDENTITY = 'Storage Account Key', SECRET = '#DATA_LAKE_ACCOUNT_KEY#'),\n    FILE_TYPE = 'CSV',\n    FIRSTROW = 2,\n\tFIELDQUOTE='''',\n    ENCODING='UTF8'\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

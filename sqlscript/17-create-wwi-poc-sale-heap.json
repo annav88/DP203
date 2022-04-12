@@ -1,0 +1,20 @@
+{
+	"name": "17-create-wwi-poc-sale-heap",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "EXECUTE AS USER = 'asa.sql.highperf'\n\nIF OBJECT_ID(N'[wwi_poc].[Sale]', N'U') IS NOT NULL   \nDROP TABLE [wwi_poc].[Sale]  \n\nCREATE TABLE [wwi_poc].[Sale]\nWITH\n(\n\tDISTRIBUTION = ROUND_ROBIN,\n\tHEAP\n)\nAS\nSELECT\n\t*\nFROM\t\n\t[wwi].[SaleSmall]\nWHERE\n    TransactionDateId < 20170501\n    AND TransactionDateId >= 20140101\nOPTION  (LABEL  = 'CTAS : wwi_poc.Sale')\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "18-get-sql-pool-artifacts",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "SELECT\n    S.name + '.' + T.name as ObjectName\n    ,'table' as ObjectType\nFROM\n    sys.tables T\n    join sys.schemas S on\n            T.schema_id = S.schema_id\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'schema' as ObjectType\nFROM\n    sys.schemas\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'externaldatasource' as ObjectType\nFROM\n    sys.external_data_sources\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'externalfileformat' as ObjectType\nFROM\n    sys.external_file_formats\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'workloadgroup' as ObjectType\nFROM\n    sys.workload_management_workload_groups\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'workloadclassifier' as ObjectType\nFROM\n    sys.workload_management_workload_classifiers\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'view' as ObjectType\nFROM\n    sys.views\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'statistic' as ObjectType\nFROM\n    sys.stats\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'index' as ObjectType\nFROM\n    sys.indexes\nWHERE\n    [name] is not NULL\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'function' as ObjectType\nFROM\n    sys.sql_modules M \n    join sys.objects O ON\n        M.object_id = O.object_id\nWHERE\n    O.type = 'IF'\nUNION ALL\nSELECT\n    name as ObjectName\n    ,'securitypolicy' as ObjectType\nFROM\n    sys.security_policies\nUNION ALL\nselect \n    S.name + '.' + T.name + '.' + MC.name as ObjectName\n    ,'maskedcolumn' as ObjectType\nfrom \n    sys.masked_columns MC\n    join sys.tables T ON\n        MC.object_id = T.object_id\n    join sys.schemas S ON\n        T.schema_id = S.schema_id\nWHERE\n    MC.is_masked = 1\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

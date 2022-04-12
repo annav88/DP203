@@ -1,0 +1,20 @@
+{
+	"name": "02-create-users",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "create user [asa.sql.workload01] for login [asa.sql.workload01]\ncreate user [asa.sql.workload02] for login [asa.sql.workload02]\nexecute sp_addrolemember 'db_datareader', 'asa.sql.workload01' \nexecute sp_addrolemember 'db_datareader', 'asa.sql.workload02'\n\n\ncreate user [asa.sql.import01] for login [asa.sql.import01]\ncreate user [asa.sql.import02] for login [asa.sql.import02]\nexecute sp_addrolemember 'db_owner', 'asa.sql.import01'  \nexecute sp_addrolemember 'db_owner', 'asa.sql.import02' \n\n\ncreate user [asa.sql.highperf] for login [asa.sql.highperf]\nexecute sp_addrolemember 'db_owner', 'asa.sql.highperf' \nexecute sp_addrolemember 'staticrc80', 'asa.sql.highperf' \n    \nCREATE USER [#USER_NAME#] FROM EXTERNAL PROVIDER;\nEXEC sp_addrolemember 'db_owner', '#USER_NAME#'",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

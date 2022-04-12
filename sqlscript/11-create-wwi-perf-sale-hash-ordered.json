@@ -1,0 +1,20 @@
+{
+	"name": "11-create-wwi-perf-sale-hash-ordered",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "EXECUTE AS USER = 'asa.sql.highperf'\n\nIF OBJECT_ID(N'[wwi_perf].[Sale_Hash_Ordered]', N'U') IS NOT NULL   \nDROP TABLE [wwi_perf].[Sale_Hash_Ordered] \n\nCREATE TABLE [wwi_perf].[Sale_Hash_Ordered]\nWITH\n(\n    DISTRIBUTION = HASH ( [CustomerId] ),\n    CLUSTERED COLUMNSTORE INDEX ORDER( [CustomerId] )\n)\nAS\nSELECT\n    *\nFROM\t\n    [wwi_perf].[Sale_Heap]\nOPTION  (LABEL  = 'CTAS : Sale_Hash_Ordered', MAXDOP 1)",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

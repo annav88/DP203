@@ -1,0 +1,75 @@
+{
+	"name": "Lab 07 - User Profiles to Datalake",
+	"properties": {
+		"description": "In this lab we are creating a pipeline with a mapping data flow activity (using JSON definition and not the GUI) and then we add a Synapse Spark Notebook activity, by passing a parameter throughout the pipeline",
+		"activities": [
+			{
+				"name": "user_profiles_to_datalake",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "user_profiles_to_datalake",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Notebook1",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "user_profiles_to_datalake",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "Lab 07",
+						"type": "NotebookReference"
+					},
+					"parameters": {
+						"runId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
+					"snapshot": true,
+					"sparkPool": {
+						"referenceName": "SparkPool01",
+						"type": "BigDataPoolReference"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-03-30T08:02:31Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

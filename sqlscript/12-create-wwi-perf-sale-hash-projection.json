@@ -1,0 +1,20 @@
+{
+	"name": "12-create-wwi-perf-sale-hash-projection",
+	"properties": {
+		"folder": {
+			"name": "DP203/Initial Setup Scripts"
+		},
+		"content": {
+			"query": "EXECUTE AS USER = 'asa.sql.highperf'\n\nIF OBJECT_ID(N'[wwi_perf].[Sale_Hash_Projection]', N'U') IS NOT NULL   \nDROP TABLE [wwi_perf].[Sale_Hash_Projection]\n\n\nCREATE TABLE [wwi_perf].[Sale_Hash_Projection]\nWITH\n(\n\tDISTRIBUTION = HASH ( [CustomerId] ),\n\tHEAP\n)\nAS\nSELECT\n\t[CustomerId]\n\t,[ProductId]\n\t,[Quantity]\nFROM\n\t[wwi_perf].[Sale_Heap]\nOPTION  (LABEL  = 'CTAS : Sale_Hash_Projection')",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
