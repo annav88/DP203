@@ -1,0 +1,60 @@
+{
+	"name": "DP203 - Lab 8 Security Lab",
+	"properties": {
+		"activities": [
+			{
+				"name": "WebActivity",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://asakeyvaulteci6fj5.vault.azure.net/secrets/PipelineSecret/ddced1ee78494c41a5e4e38b50049a76?api-version=7.1",
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "WebActivity",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SecretValue",
+					"value": {
+						"value": "@activity('WebActivity').output.value",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"SecretValue": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-31T19:34:19Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}
