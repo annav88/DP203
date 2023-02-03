@@ -1,0 +1,17 @@
+{
+	"name": "DP203 - Lab 22 - Exercise 2",
+	"properties": {
+		"content": {
+			"query": " CREATE USER purview3a8qtif FROM EXTERNAL PROVIDER;\n GO\n\n EXEC sp_addrolemember 'db_datareader', purview3a8qtif;\n GO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "lakedb",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

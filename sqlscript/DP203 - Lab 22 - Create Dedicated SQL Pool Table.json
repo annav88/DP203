@@ -1,0 +1,17 @@
+{
+	"name": "DP203 - Lab 22 - Create Dedicated SQL Pool Table",
+	"properties": {
+		"content": {
+			"query": "-- Create a table\nCREATE TABLE dbo.products(\n\tProductID INT NOT NULL,\n\tProductName NVARCHAR (100) NOT NULL,\n\tCategory NVARCHAR (100) NOT NULL,\n\tListPrice DECIMAL NULL\n);\nGO\n\nPRINT 'products table created.';\nGO\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "sql3a8qtif",
+				"poolName": "sql3a8qtif"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

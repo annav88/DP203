@@ -1,0 +1,17 @@
+{
+	"name": "DP203 - Lab 22 - Exercise 1",
+	"properties": {
+		"content": {
+			"query": " CREATE LOGIN purview3a8qtif FROM EXTERNAL PROVIDER;\n GO\n\n CREATE USER purview3a8qtif FOR LOGIN purview3a8qtif;\n GO\n\n ALTER ROLE db_datareader ADD MEMBER purview3a8qtif;\n GO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
