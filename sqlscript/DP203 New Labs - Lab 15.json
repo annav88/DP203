@@ -1,0 +1,17 @@
+{
+	"name": "DP203 New Labs - Lab 15",
+	"properties": {
+		"content": {
+			"query": "--CREATE SCHEMA SalesLT;\n--GO\n\nSELECT  oh.SalesOrderID, oh.OrderDate,\n         p.ProductNumber, p.Color, p.Size,\n         c.EmailAddress AS CustomerEmail,\n         od.OrderQty, od.UnitPrice\nFROM SalesLT.SalesOrderHeader AS oh\nJOIN SalesLT.SalesOrderDetail AS od \n    ON oh.SalesOrderID = od.SalesOrderID\nJOIN  SalesLT.Product AS p \n    ON od.ProductID = p.ProductID\nJOIN SalesLT.Customer as c\n    ON oh.CustomerID = c.CustomerID\nORDER BY oh.SalesOrderID;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "sqlmyqb3sh",
+				"poolName": "sqlmyqb3sh"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
