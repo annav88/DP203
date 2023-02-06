@@ -1,0 +1,17 @@
+{
+	"name": "DP203 New Labs - Lab 9 - Post Load Optimization Visualization",
+	"properties": {
+		"content": {
+			"query": "--PRIOR TO POST LOAD OPTIMIZATION we can create a view that shows our current situation for all tables\n--For example, in this newly created view we can compare the value of COMPRESSED_rowgroup_count to the row_count_per_distribution_MAX\n\nSELECT TOP (100) [execution_date]\n,[database_name]\n,[schema_name]\n,[table_name]\n,[table_partition_count]\n,[row_count_total]\n,[row_count_per_distribution_MAX]\n,[rowgroup_per_distribution_MAX]\n,[INVISIBLE_rowgroup_count]\n,[INVISIBLE_rowgroup_rows]\n,[INVISIBLE_rowgroup_rows_MIN]\n,[INVISIBLE_rowgroup_rows_MAX]\n,[INVISIBLE_rowgroup_rows_AVG]\n,[OPEN_rowgroup_count]\n,[OPEN_rowgroup_rows]\n,[OPEN_rowgroup_rows_MIN]\n,[OPEN_rowgroup_rows_MAX]\n,[OPEN_rowgroup_rows_AVG]\n,[CLOSED_rowgroup_count]\n,[CLOSED_rowgroup_rows]\n,[CLOSED_rowgroup_rows_MIN]\n,[CLOSED_rowgroup_rows_MAX]\n,[CLOSED_rowgroup_rows_AVG]\n,[COMPRESSED_rowgroup_count]\n,[COMPRESSED_rowgroup_rows]\n,[COMPRESSED_rowgroup_rows_DELETED]\n,[COMPRESSED_rowgroup_rows_MIN]\n,[COMPRESSED_rowgroup_rows_MAX]\n,[COMPRESSED_rowgroup_rows_AVG]\n,[Rebuild_Index_SQL]\n FROM [dbo].[vColumnstoreDensity]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "sqldzlfquo",
+				"poolName": "sqldzlfquo"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
