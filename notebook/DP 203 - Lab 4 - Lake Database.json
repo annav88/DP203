@@ -18,14 +18,11 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "a77f925c-9cf2-479d-8823-075e509ec578"
+				"spark.autotune.trackingId": "45ff157a-3427-4468-8de0-be84e7b4d26b"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
-			"synapse_widget": {
-				"version": "0.1"
-			},
 			"enableDebugMode": false,
 			"kernelspec": {
 				"name": "synapse_pyspark",
@@ -41,14 +38,13 @@
 				"endpoint": "https://synapse0fwzpyo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark0fwzpyo",
 				"auth": {
 					"type": "AAD",
-					"authResource": "https://dev.azuresynapse.net",
-					"authHeader": null
+					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.1",
 				"nodeCount": 3,
 				"cores": 4,
 				"memory": 28,
-				"extraHeader": null
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
